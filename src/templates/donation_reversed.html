@@ -1,0 +1,7 @@
+<h1 style="font-size:22px;margin:0 0 16px;">Your gift of {{ donation.currency }} {{ donation.amount }} has been reversed</h1>
+<p style="line-height:1.6;">{{ donor.first_name | default("Friend") }}, the donation you made on {{ donation.date }} has been reversed{{#if reversal.reason}} ({{ reversal.reason }}){{/if}}.</p>
+{{#if receipt}}
+<p style="line-height:1.6;">Receipt <strong>{{ receipt.number }}</strong> has been voided and is no longer valid for tax purposes. Please discard it.</p>
+{{/if}}
+<p style="line-height:1.6;">If this is unexpected, reply to this message and we will look into it.</p>
+<p style="line-height:1.6;">&mdash; {{ org.name }}</p>

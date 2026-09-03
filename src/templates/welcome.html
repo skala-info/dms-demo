@@ -1,0 +1,8 @@
+<h1 style="font-size:22px;margin:0 0 16px;">Welcome, {{ donor.first_name | default("friend") }}.</h1>
+<p style="line-height:1.6;">Thank you for registering as a supporter of {{ org.name }}. Your record is now on file, and we will keep you posted on what your giving makes possible.</p>
+{{#if campaign}}
+<p style="line-height:1.6;">Here is where our current appeal stands today:</p>
+{{{ progress }}}
+{{/if}}
+<p style="line-height:1.6;">If you would rather not receive campaign progress updates, you can turn them off at any time &mdash; receipts for your donations will still reach you.</p>
+<p style="line-height:1.6;">With gratitude,<br>{{ org.name }}</p>

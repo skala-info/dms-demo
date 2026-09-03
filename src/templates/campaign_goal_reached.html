@@ -1,0 +1,8 @@
+<h1 style="font-size:22px;margin:0 0 16px;">We did it &mdash; {{ campaign.name }} is fully funded.</h1>
+<p style="line-height:1.6;">{{ donor.first_name | default("Friend") }}, {{ campaign.name }} has reached its goal of {{ campaign.currency }} {{ campaign.goal }}.</p>
+{{{ progress }}}
+<p style="line-height:1.6;">{{ campaign.donor_count }} donors made this happen, and you were one of them. Your giving to this campaign totals <strong>{{ donor.campaign_total_currency }} {{ donor.campaign_total }}</strong>.</p>
+{{#if campaign.still_open }}
+<p style="line-height:1.6;">The campaign stays open until {{ campaign.end_date }} &mdash; every gift from here on extends the work beyond what we planned.</p>
+{{/if}}
+<p style="line-height:1.6;">Thank you,<br>{{ org.name }}</p>

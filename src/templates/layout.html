@@ -1,0 +1,11 @@
+<div style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#1f2933;max-width:600px;margin:0 auto;padding:24px;">
+  <p style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin:0 0 20px;">{{ org.name }}</p>
+  {{{ content }}}
+  <hr style="border:none;border-top:1px solid #e5e7eb;margin:28px 0 16px;">
+  <p style="font-size:12px;color:#6b7280;line-height:1.6;margin:0;">
+    {{ org.name }}{{#if org.tax_id}} &middot; Tax ID {{ org.tax_id }}{{/if}}<br>
+    {{ org.address }}<br>
+    You are receiving this because you support our work.
+    <a href="{{ links.preferences_url }}" style="color:#6b7280;">Manage your email preferences</a>.
+  </p>
+</div>

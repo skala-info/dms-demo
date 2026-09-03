@@ -1,0 +1,10 @@
+<h1 style="font-size:22px;margin:0 0 16px;">{{ campaign.name }} has closed</h1>
+<p style="line-height:1.6;">{{ donor.first_name | default("Friend") }}, {{ campaign.name }} closed on {{ campaign.closed_on }}.</p>
+{{{ progress }}}
+{{#if campaign.goal_reached}}
+<p style="line-height:1.6;">We finished at {{ campaign.percent | pct }} of goal. Thank you for being part of it.</p>
+{{else}}
+<p style="line-height:1.6;">We finished at {{ campaign.percent | pct }} of goal &mdash; short of the target, but every {{ campaign.currency }} of it is at work. Thank you for what you gave.</p>
+{{/if}}
+<p style="line-height:1.6;">Your total giving to this campaign was <strong>{{ donor.campaign_total_currency }} {{ donor.campaign_total }}</strong>.</p>
+<p style="line-height:1.6;">&mdash; {{ org.name }}</p>

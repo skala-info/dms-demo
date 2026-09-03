@@ -1,0 +1,5 @@
+<h1 style="font-size:22px;margin:0 0 16px;">{{ campaign.name }} is {{ milestone.percent | pct }} funded.</h1>
+<p style="line-height:1.6;">{{ donor.first_name | default("Friend") }}, because you gave, {{ campaign.name }} has just passed <strong>{{ milestone.percent | pct }}</strong> of its goal.</p>
+{{{ progress }}}
+<p style="line-height:1.6;">Your own contribution to this campaign so far is <strong>{{ donor.campaign_total_currency }} {{ donor.campaign_total }}</strong> across {{ donor.campaign_donation_label }}. Thank you for getting us here.</p>
+<p style="line-height:1.6;">&mdash; {{ org.name }}</p>

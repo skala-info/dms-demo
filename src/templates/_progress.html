@@ -1,0 +1,16 @@
+<div style="border:1px solid #e5e7eb;border-radius:10px;padding:18px;margin:20px 0;background:#f9fafb;">
+  <p style="margin:0 0 4px;font-weight:600;font-size:15px;">{{ campaign.name }}</p>
+  <p style="margin:0 0 12px;font-size:13px;color:#6b7280;">
+    {{ campaign.currency }} {{ campaign.raised }} raised of {{ campaign.goal }} goal
+  </p>
+  <div style="background:#e5e7eb;border-radius:999px;height:10px;overflow:hidden;">
+    <div style="background:#2563eb;height:10px;width:{{ campaign.bar_width }}%;"></div>
+  </div>
+  <p style="margin:12px 0 0;font-size:14px;">
+    <strong>{{ campaign.percent | pct }}</strong> of the goal is funded &mdash;
+    {{ campaign.currency }} {{ campaign.remaining }} still to raise.
+  </p>
+  <p style="margin:6px 0 0;font-size:13px;color:#6b7280;">
+    {{ campaign.donor_label }} &middot; {{ campaign.donation_label }}{{#if campaign.days_label}} &middot; {{ campaign.days_label }} left{{/if}}
+  </p>
+</div>

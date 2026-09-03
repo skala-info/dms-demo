@@ -1,0 +1,14 @@
+{
+  "name": "dms-demo1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DMS demo1 - trimmed donor management slice: register a donor, record a donation, keep the donor informed of campaign progress by email.",
+  "type": "module",
+  "engines": { "node": ">=18.17" },
+  "scripts": {
+    "start": "node src/main.js",
+    "demo": "node scripts/demo.js",
+    "test": "node --test tests/"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DMS demo1 — console</title>
+  <link rel="stylesheet" href="/ui/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>&#127873;</text></svg>">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">DMS</span>
+        <span class="brand-sub">demo1 console</span>
+      </div>
+
+      <nav id="nav">
+        <a href="#/" data-route="/">Overview</a>
+        <a href="#/donors" data-route="/donors">Donors</a>
+        <a href="#/donations" data-route="/donations">Donations</a>
+        <a href="#/campaigns" data-route="/campaigns">Campaigns</a>
+        <a href="#/stats" data-route="/stats">Stats</a>
+        <a href="#/communications" data-route="/communications">Communications</a>
+        <a href="#/activity" data-route="/activity">Activity</a>
+      </nav>
+
+      <div class="sidebar-foot">
+        <label class="field">
+          <span>API key</span>
+          <input id="api-key" type="text" spellcheck="false" autocomplete="off">
+        </label>
+        <div id="conn" class="conn"><i></i><span>connecting…</span></div>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <h1 id="view-title">Overview</h1>
+          <p id="view-sub" class="muted"></p>
+        </div>
+        <div class="topbar-actions">
+          <button id="run-jobs" class="btn btn-primary" type="button" title="Drain the outbox and send the queued mail">Run jobs</button>
+          <button id="refresh" class="btn" type="button">Refresh</button>
+        </div>
+      </header>
+
+      <section id="view" class="view"><div class="loading">Loading…</div></section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="/ui/app.js"></script>
+</body>
+</html>

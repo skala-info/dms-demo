@@ -1,0 +1,8 @@
+<h1 style="font-size:22px;margin:0 0 16px;">Where {{ campaign.name }} stands</h1>
+<p style="line-height:1.6;">{{ donor.first_name | default("Friend") }}, here is the latest on the campaign you supported.</p>
+{{{ progress }}}
+{{#if campaign.since_last }}
+<p style="line-height:1.6;">Since we last wrote, {{ campaign.currency }} {{ campaign.since_last }} has come in.</p>
+{{/if}}
+<p style="line-height:1.6;">Your giving to this campaign: <strong>{{ donor.campaign_total_currency }} {{ donor.campaign_total }}</strong> across {{ donor.campaign_donation_label }}.</p>
+<p style="line-height:1.6;">&mdash; {{ org.name }}</p>
