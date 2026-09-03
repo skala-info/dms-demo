@@ -22,6 +22,7 @@ cd demo1
 npm run demo     # the whole flow, narrated, with assertions
 npm test         # 64 tests: domain, HTTP contract, notification scenarios, stats, layering, console
 npm start        # the HTTP API on :3000, with the console at http://localhost:3000/
+                 # (the console also runs with no server at all - see "Hosting it with no backend")
 ```
 
 No install step. Node 18.17+ (developed on 20).
@@ -78,6 +79,43 @@ progress-to-goal sits above the filter because a goal is cumulative, not a perio
 notification story is visible without waiting for a scheduler. The API key box in the
 bottom-left corner is pre-filled with `demo-key` and remembered in `localStorage`; the
 console's files are public, everything it then asks for is not.
+
+## Hosting it with no backend
+
+The demo also runs as **pure static files** — Netlify, GitHub Pages, or a folder opened
+over any static server — with no Node process anywhere.
+
+It is not a mock. When nothing answers `/health`, `src/web/public/boot.js` loads demo1's
+own request handler into the page and points `fetch` at it, so the router, the services,
+the domain rules, the receipt numbering, the idempotency keys, the outbox and the seven
+email templates are the same modules `npm start` loads. Two things swap, and both were
+already swappable: the store keeps its rows in memory instead of flushing to `data/db.json`,
+and the email adapter is the in-memory one. Every visitor gets a private dataset, seeded
+through the public API by `seed.js`, and a reload gives them a fresh one.
+
+The `node:` imports that the source makes are resolved by an **import map** in
+`index.html` onto small browser shims in `src/web/public/shims/` — so there is still no
+build step, and not one line of the server code had to change.
+
+`netlify.toml` publishes this folder as-is (the page imports `/src/...` at runtime, so the
+source has to ship too) and maps `/ui/*` onto the page's directory:
+
+```toml
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/ui/*"
+  to = "/src/web/public/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/src/web/public/index.html"
+  status = 200
+```
+
+Point Netlify's base directory at `demo1` and deploy — there is no build command.
 
 ## Try the API
 
@@ -162,5 +200,6 @@ with a sibling `currency` on the wire. There is no float anywhere in the codebas
 | How is a double-charge prevented? | `src/core/idempotency.js` + `POST /donations` requiring `Idempotency-Key` |
 | Why did this donor not get that email? | `GET /api/v1/donors/{id}/communications` — suppressed messages are recorded, not skipped |
 | Why does the UI hold no rules? | `src/web/` — it serves files; the page it serves calls `/api/v1` |
+| How does it run without a server? | `src/web/public/boot.js` — the real handler, in the page, behind `fetch` |
 | Where do the charts get their numbers? | `src/domain/stats.js` — aggregated server-side, off the same `countsTowardsSummary` rule |
 | When is a pie chart allowed? | `donutChart` in `src/web/public/app.js` — part-to-whole, few slices, well separated; everything else is a bar |

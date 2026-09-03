@@ -417,3 +417,15 @@ table.viz { font-variant-numeric: tabular-nums; }
 .chart .slice:focus-visible { stroke: var(--ink); stroke-width: 2; }
 .legend .item[tabindex] { cursor: default; border-radius: 6px; padding: 1px 3px; }
 .legend .item[tabindex]:hover, .legend .item[tabindex]:focus-visible { background: var(--line-soft); outline: none; }
+
+/* ---------- in-browser mode banner ---------- */
+
+.mode-banner {
+  padding: 8px 28px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--ink-soft);
+}
+.mode-banner.ok { border-left: 3px solid var(--ok); }
+.mode-banner.bad { border-left: 3px solid var(--bad); color: var(--bad); }

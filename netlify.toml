@@ -1,14 +1,23 @@
-[build]
-  publish = "src/web/public"
+# demo1 on Netlify — the whole demo, no backend.
+#
+# The site publishes this folder as-is, because the page imports demo1's own source at
+# runtime: with no server answering, boot.js runs the real request handler in the browser
+# (see src/web/public/boot.js). So src/ has to be reachable, not just the built page.
+#
+# Netlify serves a matching file before consulting these rules, so /src/... resolves
+# directly and only unmatched paths fall through.
 
-# The page asks for /ui/app.js and /ui/styles.css; on disk they sit at the publish root.
+[build]
+  publish = "."
+
+# The page asks for /ui/*, which the Node server maps onto public/ at runtime.
 [[redirects]]
   from = "/ui/*"
-  to = "/:splat"
+  to = "/src/web/public/:splat"
   status = 200
 
-# SPA catch-all.
+# SPA catch-all: every other path is the console itself.
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/src/web/public/index.html"
   status = 200

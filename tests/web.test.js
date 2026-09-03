@@ -33,9 +33,19 @@ test('the console is served at / without a credential', async (t) => {
   assert.equal(page.status, 200);
   assert.equal(page.type, 'text/html; charset=utf-8');
   assert.match(page.body, /<title>DMS demo1/);
-  assert.match(page.body, /\/ui\/app\.js/);
+  // The page boots through boot.js, which loads the console once it knows whether a real
+  // server is answering; without one it runs demo1's handler in the browser instead.
+  assert.match(page.body, /\/ui\/boot\.js/);
+  assert.match(page.body, /"node:fs": "\/ui\/shims\/fs\.js"/);
 
-  for (const [path, type] of [['/ui/app.js', 'text/javascript; charset=utf-8'], ['/ui/styles.css', 'text/css; charset=utf-8']]) {
+  for (const [path, type] of [
+    ['/ui/app.js', 'text/javascript; charset=utf-8'],
+    ['/ui/boot.js', 'text/javascript; charset=utf-8'],
+    ['/ui/seed.js', 'text/javascript; charset=utf-8'],
+    ['/ui/shims/fs.js', 'text/javascript; charset=utf-8'],
+    ['/ui/shims/globals.js', 'text/javascript; charset=utf-8'],
+    ['/ui/styles.css', 'text/css; charset=utf-8'],
+  ]) {
     const asset = await raw(h.port, path);
     assert.equal(asset.status, 200, path);
     assert.equal(asset.type, type, path);
