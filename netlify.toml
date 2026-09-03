@@ -1,0 +1,14 @@
+[build]
+  publish = "src/web/public"
+
+# The page asks for /ui/app.js and /ui/styles.css; on disk they sit at the publish root.
+[[redirects]]
+  from = "/ui/*"
+  to = "/:splat"
+  status = 200
+
+# SPA catch-all.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
