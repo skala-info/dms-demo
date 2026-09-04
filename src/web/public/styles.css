@@ -43,6 +43,8 @@
   --viz-cat-2: #eb6834;
   --viz-cat-3: #1baf7a;
   --viz-cat-4: #eda100;
+  --viz-cat-5: #e87ba4;
+  --viz-cat-6: #008300;
   --viz-cat-other: #8a91a0;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
@@ -75,6 +77,8 @@
     --viz-cat-2: #d95926;
     --viz-cat-3: #199e70;
     --viz-cat-4: #c98500;
+    --viz-cat-5: #d55181;
+    --viz-cat-6: #008300;
     --viz-cat-other: #757d8d;
   }
 }
@@ -401,16 +405,22 @@ table.viz { font-variant-numeric: tabular-nums; }
 .chart .cat-2 { fill: var(--viz-cat-2); }
 .chart .cat-3 { fill: var(--viz-cat-3); }
 .chart .cat-4 { fill: var(--viz-cat-4); }
+.chart .cat-5 { fill: var(--viz-cat-5); }
+.chart .cat-6 { fill: var(--viz-cat-6); }
 .chart .cat-other { fill: var(--viz-cat-other); }
 .sw-cat-1 { background: var(--viz-cat-1); }
 .sw-cat-2 { background: var(--viz-cat-2); }
 .sw-cat-3 { background: var(--viz-cat-3); }
 .sw-cat-4 { background: var(--viz-cat-4); }
+.sw-cat-5 { background: var(--viz-cat-5); }
+.sw-cat-6 { background: var(--viz-cat-6); }
 .sw-cat-other { background: var(--viz-cat-other); }
 
-/* Ink on every slot, in both modes: measured 4.4:1 or better on all five fills,
-   where white manages only 2.2-4.4. So the on-slice label never themes. */
+/* On-slice labels take ink or white by the fill's luminance, measured per slot. Ink wins
+   on every slot but the green (3.98:1 ink vs 4.95:1 white), which takes white. The fills
+   are the same in both modes, so these do not theme. */
 .chart .slice-label { fill: #0b0b0b; font-size: 11px; font-weight: 620; }
+.chart .slice-label.on-cat-6 { fill: #ffffff; }
 .chart .donut-total { fill: var(--ink); font-size: 17px; font-weight: 650; }
 .chart .donut-note { fill: var(--viz-muted); font-size: 11px; }
 .chart .slice { outline: none; }

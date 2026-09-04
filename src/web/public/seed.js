@@ -9,6 +9,23 @@ const dayOffset = (days) => {
   return date.toISOString().slice(0, 10);
 };
 
+// Pastors Discipleship Network's appeals. `endsIn` is days from today; a negative value
+// is a date already past, which is how the completed run gets a sensible end date.
+const CAMPAIGNS = [
+  { code: 'ATW26', name: 'Africa to the World', goal: '20000.00', endsIn: 150, fund: 'GEN' },
+  { code: 'ALS26', name: 'Africa Leadership Summit', goal: '25000.00', endsIn: 75, fund: 'TRAIN' },
+  { code: 'ROOT26', name: 'Rooted in the Word', goal: '8000.00', endsIn: 200, fund: 'TRAIN' },
+  { code: 'IPM26', name: 'Interim Pastoral Ministry', goal: '9000.00', endsIn: 120, fund: 'TRAIN' },
+  { code: 'YELT26', name: 'Youth & Emerging Leaders Training', goal: '7500.00', endsIn: 95, fund: 'TRAIN' },
+  { code: 'RAU26', name: 'Run Across Uganda', goal: '6000.00', endsIn: -10, fund: 'GEN' },
+];
+
+// Which appeal each gift lands on, weighted so the flagship appeals carry the most.
+const ALLOCATION_ORDER = [
+  'ATW26', 'ALS26', 'ATW26', 'ROOT26', 'ALS26', 'IPM26',
+  'ATW26', 'YELT26', 'ALS26', 'RAU26', 'ROOT26', 'ATW26',
+];
+
 const PEOPLE = [
   ['Jane', 'Okonkwo', {}],
   ['Marcus', 'Bell', {}],
@@ -36,9 +53,14 @@ const GIFTS = [
   [5, 2, 85, 'CREDIT_CARD'], [2, 7, 1100, 'BANK_TRANSFER'],
 ];
 
-export async function seedDemo(apiKey) {
+/**
+ * @param apiKey  the organisation's key
+ * @param origin  '' in the browser (same page); an http://host:port for `npm run seed`,
+ *                so the console and the local server are seeded from one definition.
+ */
+export async function seedDemo(apiKey, origin = '') {
   const call = async (method, path, body, extra = {}) => {
-    const response = await fetch(`/api/v1${path}`, {
+    const response = await fetch(`${origin}/api/v1${path}`, {
       method,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}`, ...extra },
       body: body === undefined ? undefined : JSON.stringify(body),
@@ -50,12 +72,19 @@ export async function seedDemo(apiKey) {
   const post = (path, body, extra) => call('POST', path, body, extra);
   const amount = (major) => `${major}.00`;
 
-  const water = await post('/funds', { code: 'WATER', name: 'Clean Water Fund' });
-  const general = await post('/funds', { code: 'GEN', name: 'General Fund' });
+  const funds = {
+    GEN: await post('/funds', { code: 'GEN', name: 'General Fund' }),
+    TRAIN: await post('/funds', { code: 'TRAIN', name: 'Training & Discipleship Fund' }),
+  };
 
-  const wells = await post('/campaigns', { code: 'WELL26', name: 'Twelve Wells by Spring', goal: '50000.00', currency: 'USD', end_date: dayOffset(-60) });
-  const warmth = await post('/campaigns', { code: 'WARM26', name: 'Winter Warmth Appeal', goal: '10000.00', currency: 'USD', end_date: dayOffset(-90) });
-  const school = await post('/campaigns', { code: 'SCHL26', name: 'Riverbank School Books', goal: '8000.00', currency: 'USD', end_date: dayOffset(-120) });
+  const campaigns = {};
+  for (const entry of CAMPAIGNS) {
+    campaigns[entry.code] = await post('/campaigns', {
+      code: entry.code, name: entry.name, goal: entry.goal,
+      currency: 'USD', end_date: dayOffset(-entry.endsIn),
+    });
+  }
+  const fundFor = (code) => funds[CAMPAIGNS.find((c) => c.code === code).fund];
 
   const donors = [];
   for (const [first, last, preferences] of PEOPLE) {
@@ -63,16 +92,16 @@ export async function seedDemo(apiKey) {
       first_name: first,
       last_name: last,
       email: `${first}.${last}@example.com`.toLowerCase(),
-      welcome_campaign_id: wells.id,
+      welcome_campaign_id: campaigns.ATW26.id,
       ...preferences,
     }));
   }
 
-  const campaigns = [wells, wells, warmth, wells, school, wells, warmth, school];
   const recorded = [];
   for (const [daysAgo, who, major, method] of GIFTS) {
-    const campaign = campaigns[(recorded.length + who) % campaigns.length];
-    const fund = campaign.id === wells.id ? water : general;
+    const code = ALLOCATION_ORDER[(recorded.length + who) % ALLOCATION_ORDER.length];
+    const campaign = campaigns[code];
+    const fund = fundFor(code);
     recorded.push(await post('/donations', {
       donor_id: donors[who].id,
       amount: amount(major),
@@ -85,8 +114,8 @@ export async function seedDemo(apiKey) {
 
   // One correction and one closure, so REVERSED and CLOSED are visible in the demo.
   await post(`/donations/${recorded[6].id}/reverse`, { reason: 'Cheque returned unpaid' });
-  await post(`/campaigns/${school.id}/close`, { reason: 'The books are bought.' });
-  await post(`/campaigns/${warmth.id}/send-update`, {});
+  await post(`/campaigns/${campaigns.RAU26.id}/close`, { reason: 'The run is finished — thank you for every mile.' });
+  await post(`/campaigns/${campaigns.ALS26.id}/send-update`, {});
   await post('/jobs/run', { include_digests: true, digest_interval_days: 7 });
 
   return { donors: donors.length, donations: recorded.length };

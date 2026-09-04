@@ -320,8 +320,20 @@
       { currency: statsEnv.data.currency, totalLabel: 'Method' },
     );
 
-    const cards = campaigns.map((campaign, i) => {
-      const p = progress[i];
+    // The dashboard leads with a few campaigns rather than all of them: active first,
+    // largest first within that. The whole list is one click away under Manage.
+    //
+    // This constant is the seam for letting the reader choose which appear here — the
+    // selection is a pure function of `campaigns` and `progress`, so a saved list of ids
+    // would slot in as a filter right here without touching the card markup.
+    const DASHBOARD_CAMPAIGNS = 3;
+    const featured = campaigns
+      .map((campaign, i) => ({ campaign, progress: progress[i] }))
+      .sort((a, b) => (a.campaign.status === 'ACTIVE' ? 0 : 1) - (b.campaign.status === 'ACTIVE' ? 0 : 1)
+        || toMinor(b.progress.raised) - toMinor(a.progress.raised))
+      .slice(0, DASHBOARD_CAMPAIGNS);
+
+    const cards = featured.map(({ campaign, progress: p }) => {
       return `<article class="panel campaign-card">
         <div class="head">
           <h3><a href="#/campaigns/${esc(campaign.id)}">${esc(campaign.name)}</a></h3>
@@ -364,7 +376,11 @@
         </div>
 
         <div>
-          <div class="panel-head" style="border:0;padding:0 0 12px"><h2>Campaigns</h2><a class="btn btn-sm" href="#/campaigns">Manage</a></div>
+          <div class="panel-head" style="border:0;padding:0 0 12px">
+            <div><h2>Campaigns</h2>${campaigns.length > featured.length
+              ? `<span class="faint" style="font-size:12px">showing ${featured.length} of ${campaigns.length}</span>` : ''}</div>
+            <a class="btn btn-sm" href="#/campaigns">Manage</a>
+          </div>
           ${campaigns.length ? `<div class="grid grid-3">${cards}</div>` : `<div class="panel">${empty('No campaigns yet — create one from the Campaigns tab.')}</div>`}
         </div>
 
@@ -769,8 +785,8 @@
             <div class="panel-body">
               <form id="campaign-form">
                 <div class="form-grid">
-                  <label class="field"><span>Code</span><input name="code" required placeholder="WELL26"></label>
-                  <label class="field"><span>Name</span><input name="name" required placeholder="Twelve Wells"></label>
+                  <label class="field"><span>Code</span><input name="code" required placeholder="ALS26"></label>
+                  <label class="field"><span>Name</span><input name="name" required placeholder="Africa Leadership Summit"></label>
                   <label class="field"><span>Goal</span><input name="goal" inputmode="decimal" placeholder="50000.00"></label>
                   <label class="field"><span>Currency</span><input name="currency" value="USD"></label>
                   <label class="field"><span>Start date</span><input name="start_date" type="date"></label>
@@ -786,8 +802,8 @@
             <div class="panel-body">
               <form id="fund-form">
                 <div class="form-grid">
-                  <label class="field"><span>Code</span><input name="code" required placeholder="WATER"></label>
-                  <label class="field"><span>Name</span><input name="name" required placeholder="Clean Water Fund"></label>
+                  <label class="field"><span>Code</span><input name="code" required placeholder="TRAIN"></label>
+                  <label class="field"><span>Name</span><input name="name" required placeholder="Training &amp; Discipleship Fund"></label>
                   <label class="field"><span>Restriction</span>
                     <select name="restriction">${options(['UNRESTRICTED', 'TEMPORARILY_RESTRICTED', 'PERMANENTLY_RESTRICTED'], 'UNRESTRICTED', (r) => r, (r) => r.replace(/_/g, ' '))}</select>
                   </label>
@@ -1242,7 +1258,7 @@
       const room = sweep * mid > text.length * 8 + 14 && outer - inner > 16;
       const [lx, ly] = point(middle, mid);
       const label = room
-        ? `<text class="slice-label" x="${lx}" y="${Number(ly) + 4}" text-anchor="middle">${esc(text)}</text>`
+        ? `<text class="slice-label on-${esc(slice.slot)}" x="${lx}" y="${Number(ly) + 4}" text-anchor="middle">${esc(text)}</text>`
         : '';
 
       return `<path class="slice ${esc(slice.slot)}" d="${d}" tabindex="0" role="button"
@@ -1260,13 +1276,15 @@
   }
 
   /** Slots are assigned in fixed order and follow the entity, never its rank on screen. */
-  const CAT_SLOTS = ['cat-1', 'cat-2', 'cat-3', 'cat-4'];
+  const CAT_SLOTS = ['cat-1', 'cat-2', 'cat-3', 'cat-4', 'cat-5', 'cat-6'];
 
   /**
-   * At most four named slices plus "Other": past that, a ring stops being readable and
-   * the honest move is to fold the tail rather than invent a fifth and sixth hue.
+   * At most six named slices plus "Other". Six is the documented ceiling for a
+   * part-to-whole ring, and the six slots were validated around the ring — every
+   * neighbouring pair including the wrap from the last slice back to the first. Past
+   * six the tail folds rather than growing a seventh hue nobody could tell apart.
    */
-  function foldTail(rows, limit = 4) {
+  function foldTail(rows, limit = 6) {
     if (rows.length <= limit) return rows;
     const tail = rows.slice(limit);
     return [

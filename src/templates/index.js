@@ -78,11 +78,14 @@ export function renderTemplate(key, context) {
   const page = render(load('layout.html'), { ...ctx, content: body.html });
   warnings.push(...page.warnings);
 
+  // A subject line is plain text, not HTML. The renderer escapes every merge field —
+  // right for the body, wrong here: an organisation or campaign called "Youth & Emerging
+  // Leaders" would otherwise arrive in the inbox as "Youth &amp; Emerging Leaders".
   const subject = render(tpl.subject, ctx);
   warnings.push(...subject.warnings);
 
   return {
-    subject: subject.html,
+    subject: htmlToText(subject.html),
     html: page.html,
     text: htmlToText(page.html),
     warnings,

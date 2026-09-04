@@ -63,16 +63,16 @@ const mailFor = async (donorId) => (await api.get(`/api/v1/donors/${donorId}/com
 // ---------------------------------------------------------------------------
 heading('Set up a fund and a campaign with a goal');
 
-const fund = (await api.post('/api/v1/funds', { code: 'WATER', name: 'Clean Water Fund', restriction: 'TEMPORARILY_RESTRICTED' })).body.data;
+const fund = (await api.post('/api/v1/funds', { code: 'TRAIN', name: 'Training & Discipleship Fund', restriction: 'TEMPORARILY_RESTRICTED' })).body.data;
 const fundGeneral = (await api.post('/api/v1/funds', { code: 'GEN', name: 'General Fund' })).body.data;
 
 const campaign = (await api.post('/api/v1/campaigns', {
-  code: 'WELL26', name: 'Twelve Wells by Spring', description: 'Twelve boreholes for the Kitui district.',
+  code: 'ALS26', name: 'Africa Leadership Summit', description: 'Bringing 300 pastors to the 2026 summit.',
   goal: '50000.00', currency: 'USD', start_date: today, end_date: inDays(60),
 })).body.data;
 
 const winter = (await api.post('/api/v1/campaigns', {
-  code: 'WINTER26', name: 'Winter Warmth Appeal', goal: '10000.00', currency: 'USD', end_date: inDays(90),
+  code: 'RAU26', name: 'Run Across Uganda', goal: '10000.00', currency: 'USD', end_date: inDays(90),
 })).body.data;
 
 ok(`campaign ${campaign.code} "${campaign.name}" — goal ${campaign.goal} ${campaign.currency}, closes ${campaign.end_date}`);

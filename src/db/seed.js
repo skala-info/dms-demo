@@ -14,13 +14,13 @@ export function provisionOrganization(payload = {}) {
     const now = new Date().toISOString();
     return db.insert('organization', {
       id: payload.id || uuid(),
-      name: payload.name || 'Riverbank Community Trust',
-      legal_name: payload.legal_name || payload.name || 'Riverbank Community Trust',
-      tax_id: payload.tax_id || '81-0000000',
-      address: payload.address || '14 Mill Lane, Riverbank, CA 95367',
-      email: payload.email || 'hello@riverbank.example.org',
+      name: payload.name || 'Pastors Discipleship Network',
+      legal_name: payload.legal_name || payload.name || 'Pastors Discipleship Network',
+      tax_id: payload.tax_id || 'TIN-1000123456',
+      address: payload.address || 'Plot 12 Main Street, Kireka, Mukono, Uganda',
+      email: payload.email || 'hello@pdn.example.org',
       email_from: payload.email_from || config.emailFrom,
-      portal_base_url: payload.portal_base_url || 'https://give.riverbank.example.org',
+      portal_base_url: payload.portal_base_url || 'https://give.pdn.example.org',
       default_currency: payload.default_currency || 'USD',
       api_key: payload.api_key || 'demo-key',
 

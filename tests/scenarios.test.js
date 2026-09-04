@@ -271,3 +271,23 @@ test('S13 a quid-pro-quo gift receipts only the deductible part and says so', as
   assert.match(mail.text, /320\.00/);
   assert.match(mail.text, /50% of the goal is funded/, 'the full 500 still counts towards the campaign');
 });
+
+test('S14 an ampersand in a name reaches the inbox as an ampersand, not as &amp;', async (t) => {
+  // The body is HTML and must be escaped; the subject line is plain text and must not be.
+  const h = await startServer({ org: { name: 'Faith & Works Trust' } });
+  t.after(() => h.close());
+
+  const donor = (await h.api.post('/api/v1/donors', {
+    first_name: 'Ada', last_name: 'Fenwick', email: 'ada@example.com',
+  })).body.data;
+  await runJobs(h.api);
+
+  const mail = (await h.api.get(`/api/v1/donors/${donor.id}/communications`)).body.data[0];
+  assert.equal(mail.subject, 'Welcome to Faith & Works Trust');
+  assert.doesNotMatch(mail.subject, /&amp;/);
+
+  // The HTML body still escapes it, because there it really is markup.
+  const full = (await h.api.get(`/api/v1/communications/${mail.id}`)).body.data;
+  assert.match(full.html, /Faith &amp; Works Trust/);
+  assert.match(full.text, /Faith & Works Trust/);
+});

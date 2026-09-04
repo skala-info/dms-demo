@@ -20,6 +20,7 @@ specification that *this* code satisfies is in [`../docs/demo1/`](../docs/demo1/
 ```bash
 cd demo1
 npm run demo     # the whole flow, narrated, with assertions
+npm run seed     # fill data/db.json with the console's demo dataset
 npm test         # 64 tests: domain, HTTP contract, notification scenarios, stats, layering, console
 npm start        # the HTTP API on :3000, with the console at http://localhost:3000/
                  # (the console also runs with no server at all - see "Hosting it with no backend")
@@ -56,6 +57,12 @@ the wrong place.
 | Stats | Charts: money by month, gift sizes, payment methods, what happened to the mail |
 | Communications | Every message queued, sent or **suppressed** — with the rendered email and the reason |
 | Activity | The transactional outbox and the audit trail |
+
+`data/db.json` is a real, persistent store: `npm start` provisions an organisation only
+when the database is empty, so it will **not** re-seed a file that already exists. After
+the demo content changes, run `npm run seed` (or delete `data/db.json`) to see the new
+world locally. The static build has no such file — it seeds itself on every load, from
+the same definition.
 
 The dashboard carries two donuts — **raised by campaign** and **how the money arrives** —
 because those are the two questions on it that are genuinely *part-to-whole*: one total,
@@ -125,10 +132,10 @@ KEY=demo-key
 BASE=http://localhost:3000/api/v1
 
 curl -sX POST $BASE/funds -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' \
-  -d '{"code":"WATER","name":"Clean Water Fund"}'
+  -d '{"code":"TRAIN","name":"Training & Discipleship Fund"}'
 
 curl -sX POST $BASE/campaigns -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' \
-  -d '{"code":"WELL26","name":"Twelve Wells","goal":"50000.00","currency":"USD","end_date":"2026-12-31"}'
+  -d '{"code":"ALS26","name":"Africa Leadership Summit","goal":"25000.00","currency":"USD","end_date":"2026-12-31"}'
 
 curl -sX POST $BASE/donors -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' \
   -d '{"first_name":"Jane","last_name":"Okonkwo","email":"jane@example.com","welcome_campaign_id":"<campaign-id>"}'
